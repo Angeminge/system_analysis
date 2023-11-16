@@ -1,24 +1,31 @@
-import csv
+import pandas as pd 
+import numpy as np
 
+def task(input_str):
+    lines = input_str.split('\n')
+    data = [line.split(',') for line in lines]
+    file = np.array(data, dtype=int)
+    file = file.transpose()
 
-def task(graph: str) -> list:
-    ansv = [[], [], [], [], []]
+    answer = [[], [], [], [], []]
 
-    reader = csv.reader(graph.split('\n'))
-    edges = []
-    for edge in reader:
-        node1, node2 = map(int, edge)
-        edges.append((node1, node2))
-        ansv[0].append(node1)  # r1
-        ansv[1].append(node2)  # r2
+    for column in file:
+        unique_values = np.unique(column)
+        answer[0].extend(unique_values)
 
-    for edge in edges:
-        node1, node2 = edge
-        if node2 in ansv[0]:
-            ansv[2].append(node1)  # r3
-        if node1 in ansv[1]:
-            ansv[3].append(node2)  # r4
-        if ansv[0].count(node1) > 1:
-            ansv[4].append(node2)  # r5
+    for i in range(file[0].size):
+        if file[1][i] in file[0]:
+            if file[0][i] not in answer[2]:
+                answer[2].append(file[0][i])
 
-    return [list(set(i)) for i in ansv]
+    for i in range(file[0].size):
+        if file[0][i] in file[1]:
+            if file[1][i] not in answer[3]:
+                answer[3].append(file[1][i])
+
+    for i in range(file[0].size):
+        if file[0][i] in np.delete(file, i):
+            if file[1][i] not in answer[4]:
+                answer[4].append(file[1][i])
+
+    return answer
